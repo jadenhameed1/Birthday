@@ -1,3 +1,6 @@
 {
+  "/_not-found": "app/_not-found.js",
+  "/ app/app/page": "app/ app/app/page.js",
+  "/dashboard/marketplace/page": "app/dashboard/marketplace/page.js",
   "/page": "app/page.js"
 }

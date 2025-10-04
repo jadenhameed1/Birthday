@@ -13,11 +13,11 @@ export default function Home() {
               <span className="text-xl font-bold text-gray-900">TechEcosystem</span>
             </div>
             <div className="flex space-x-4">
-              <Link href="/login" className="text-gray-600 hover:text-gray-900 px-3 py-2">
+              <Link href="/auth/signin" className="text-gray-600 hover:text-gray-900 px-3 py-2">
                 Sign In
               </Link>
               <Link 
-                href="/signup" 
+                href="/auth/signup" 
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Get Started
@@ -39,7 +39,7 @@ export default function Home() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link 
-            href="/signup" 
+            href="/auth/signup" 
             className="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors text-lg font-semibold"
           >
             Start Building
@@ -81,53 +81,6 @@ export default function Home() {
             <p className="text-gray-600">
               Secure, scalable infrastructure built for million-to-billion dollar growth.
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Roadmap Preview */}
-      <section className="bg-white border-t border-gray-200">
-        <div className="container mx-auto px-4 py-16">
-          <h2 className="text-3xl font-bold text-center mb-12">Our Development Roadmap</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="border border-gray-200 rounded-lg p-6">
-              <div className="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full w-fit mb-4">
-                Phase 1
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Foundation</h3>
-              <ul className="text-gray-600 space-y-2">
-                <li>✓ Next.js Application</li>
-                <li>✓ Vercel Deployment</li>
-                <li>✓ Basic Landing Page</li>
-                <li>✓ CI/CD Pipeline</li>
-              </ul>
-            </div>
-
-            <div className="border border-gray-200 rounded-lg p-6">
-              <div className="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded-full w-fit mb-4">
-                Phase 2
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Core Features</h3>
-              <ul className="text-gray-600 space-y-2">
-                <li>Authentication System</li>
-                <li>User Dashboard</li>
-                <li>Payment Integration</li>
-                <li>AI Chat Assistant</li>
-              </ul>
-            </div>
-
-            <div className="border border-gray-200 rounded-lg p-6">
-              <div className="bg-purple-100 text-purple-800 text-sm font-semibold px-3 py-1 rounded-full w-fit mb-4">
-                Phase 3
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Ecosystem</h3>
-              <ul className="text-gray-600 space-y-2">
-                <li>Multi-tenant Architecture</li>
-                <li>Marketplace Platform</li>
-                <li>API Ecosystem</li>
-                <li>AI Recommendations</li>
-              </ul>
-            </div>
           </div>
         </div>
       </section>
