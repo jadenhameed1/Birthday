@@ -106,3 +106,15 @@ export default function DashboardNav({ user }) {
     </nav>
   )
 }
+// Add to navigation array:
+const navigation = [
+  { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Marketplace', href: '/dashboard/marketplace', icon: ShoppingCart },
+  { name: 'AI Assistant', href: '/dashboard/ai-chat', icon: MessageSquare },
+  { name: 'Recommendations', href: '/dashboard/recommendations', icon: Lightbulb },
+  { name: 'APIs', href: '/dashboard/apis', icon: Key },
+  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart },
+  { name: 'Team', href: '/dashboard/team', icon: Users },
+  { name: 'Billing', href: '/dashboard/billing', icon: CreditCard },
+  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+]
