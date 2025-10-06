@@ -3,13 +3,13 @@
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, LogOut, Users, Settings, Building2 } from 'lucide-react'
+import { LayoutDashboard, LogOut, Users, Settings, Building2, MessageSquare, Bot } from 'lucide-react'
 
 export default function DashboardNav({ user }) {
   const { data: session } = useSession()
   const pathname = usePathname()
 
-  const isActive = (path) => pathname === path
+  const isActive = (path) => pathname.startsWith(path)
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
@@ -22,6 +22,17 @@ export default function DashboardNav({ user }) {
             </Link>
             
             <div className="hidden sm:ml-6 sm:flex sm:space-x-1">
+              <Link 
+                href="/dashboard/ai-chat" 
+                className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                  isActive('/dashboard/ai-chat') 
+                    ? 'bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border border-purple-200' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                <Bot className="h-4 w-4 mr-2" />
+                AI Assistant
+              </Link>
               <Link 
                 href="/dashboard/organizations" 
                 className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${

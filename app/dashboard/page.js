@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]/route'
-import { Rocket, Zap, TrendingUp, Users, ArrowRight, Database } from 'lucide-react'
+import { Rocket, Zap, TrendingUp, Users, ArrowRight, Database, Bot, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function Dashboard() {
@@ -24,9 +24,15 @@ export default async function Dashboard() {
               Welcome back, {session.user.name || session.user.email}. Your ecosystem is growing.
             </p>
           </div>
-          <div className="flex items-center text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
-            <Database className="h-4 w-4 mr-1" />
-            Live Database
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
+              <Database className="h-4 w-4 mr-1" />
+              Live Database
+            </div>
+            <div className="flex items-center text-sm text-purple-600 bg-purple-50 px-3 py-1 rounded-full">
+              <Bot className="h-4 w-4 mr-1" />
+              AI Assistant
+            </div>
           </div>
         </div>
       </div>
@@ -60,14 +66,21 @@ export default async function Dashboard() {
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <Zap className="h-6 w-6 text-green-500" />
+                <Bot className="h-6 w-6 text-purple-500" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">AI Usage</dt>
+                  <dt className="text-sm font-medium text-gray-500 truncate">AI Conversations</dt>
                   <dd className="text-lg font-medium text-gray-900">{stats.aiUsage}</dd>
                 </dl>
               </div>
+            </div>
+          </div>
+          <div className="bg-gray-50 px-5 py-3">
+            <div className="text-sm">
+              <Link href="/dashboard/ai-chat" className="font-medium text-purple-600 hover:text-purple-500">
+                Start chat
+              </Link>
             </div>
           </div>
         </div>
@@ -76,7 +89,7 @@ export default async function Dashboard() {
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <TrendingUp className="h-6 w-6 text-purple-500" />
+                <TrendingUp className="h-6 w-6 text-green-500" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
@@ -106,46 +119,64 @@ export default async function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Link href="/dashboard/organizations" className="inline-flex items-center justify-between px-4 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700">
-              <div className="flex items-center">
-                <Users className="h-4 w-4 mr-2" />
-                Create Organization
-              </div>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <button className="inline-flex items-center justify-between px-4 py-3 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50">
-              <div className="flex items-center">
-                <Zap className="h-4 w-4 mr-2" />
-                Start AI Chat
-              </div>
-              <ArrowRight className="h-4 w-4" />
-            </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Business Management</h3>
+            <div className="space-y-3">
+              <Link href="/dashboard/organizations" className="inline-flex items-center justify-between w-full px-4 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+                <div className="flex items-center">
+                  <Users className="h-4 w-4 mr-2" />
+                  Create Organization
+                </div>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-purple-500 to-blue-500 shadow rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
+            <h3 className="text-lg font-medium text-white mb-4">AI Business Assistant</h3>
+            <p className="text-purple-100 text-sm mb-4">
+              Get strategic insights for your ecosystem platform
+            </p>
+            <div className="space-y-3">
+              <Link href="/dashboard/ai-chat" className="inline-flex items-center justify-between w-full px-4 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-purple-600 bg-white hover:bg-gray-50">
+                <div className="flex items-center">
+                  <Bot className="h-4 w-4 mr-2" />
+                  Start AI Chat
+                </div>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Database Status */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-medium text-blue-900 mb-2">Database Connected 🎉</h3>
-        <p className="text-blue-700 mb-4">
-          Your organizations are now stored securely in the Supabase database. 
-          Create organizations and they'll persist across sessions.
+      {/* AI Features Highlight */}
+      <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6">
+        <h3 className="text-lg font-medium text-purple-900 mb-3">New: AI Business Assistant 🚀</h3>
+        <p className="text-purple-700 mb-4">
+          Your AI assistant can help with business strategy, growth planning, market analysis, and competitive intelligence.
         </p>
-        <div className="flex items-center text-sm text-blue-600">
-          <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
-          Real-time data storage
-        </div>
-        <div className="flex items-center text-sm text-blue-600 mt-1">
-          <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
-          Secure user isolation
-        </div>
-        <div className="flex items-center text-sm text-blue-600 mt-1">
-          <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
-          Ready for team collaboration
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div className="flex items-center text-purple-600">
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Strategic business planning
+          </div>
+          <div className="flex items-center text-purple-600">
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Growth strategy development
+          </div>
+          <div className="flex items-center text-purple-600">
+            <Zap className="h-4 w-4 mr-2" />
+            Market insights & analysis
+          </div>
+          <div className="flex items-center text-purple-600">
+            <Rocket className="h-4 w-4 mr-2" />
+            Competitive positioning
+          </div>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
- */let toKebabCase=e=>e.replace(/([a-z0-9])([A-Z])/g,"$1-$2").toLowerCase().trim(),createLucideIcon=(e,t)=>{let a=(0,r.forwardRef)(({color:a="currentColor",size:n=24,strokeWidth:i=2,absoluteStrokeWidth:o,className:l="",children:c,...d},m)=>(0,r.createElement)("svg",{ref:m,...s,width:n,height:n,stroke:a,strokeWidth:o?24*Number(i)/Number(n):i,className:["lucide",`lucide-${toKebabCase(e)}`,l].join(" "),...d},[...t.map(([e,t])=>(0,r.createElement)(e,t)),...Array.isArray(c)?c:[c]]));return a.displayName=`${e}`,a}},5738:function(e,t,a){Promise.resolve().then(a.bind(a,9121))},9121:function(e,t,a){"use strict";a.r(t),a.d(t,{default:function(){return Organizations}});var r=a(7437),s=a(2265),n=a(2898);/**
+ */let toKebabCase=e=>e.replace(/([a-z0-9])([A-Z])/g,"$1-$2").toLowerCase().trim(),createLucideIcon=(e,t)=>{let a=(0,r.forwardRef)(({color:a="currentColor",size:n=24,strokeWidth:i=2,absoluteStrokeWidth:o,className:l="",children:c,...d},m)=>(0,r.createElement)("svg",{ref:m,...s,width:n,height:n,stroke:a,strokeWidth:o?24*Number(i)/Number(n):i,className:["lucide",`lucide-${toKebabCase(e)}`,l].join(" "),...d},[...t.map(([e,t])=>(0,r.createElement)(e,t)),...Array.isArray(c)?c:[c]]));return a.displayName=`${e}`,a}},5738:function(e,t,a){Promise.resolve().then(a.bind(a,6864))},6864:function(e,t,a){"use strict";a.r(t),a.d(t,{default:function(){return Organizations}});var r=a(7437),s=a(2265),n=a(2898);/**
  * @license lucide-react v0.294.0 - ISC
  *
  * This source code is licensed under the ISC license.
