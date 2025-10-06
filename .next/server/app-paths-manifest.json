@@ -1,11 +1,11 @@
 {
   "/_not-found": "app/_not-found.js",
   "/ app/app/page": "app/ app/app/page.js",
-  "/api/organizations/route": "app/api/organizations/route.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
   "/auth/signin/page": "app/auth/signin/page.js",
   "/page": "app/page.js",
-  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
-  "/dashboard/organizations/page": "app/dashboard/organizations/page.js",
+  "/api/organizations/route": "app/api/organizations/route.js",
   "/dashboard/marketplace/page": "app/dashboard/marketplace/page.js",
-  "/dashboard/page": "app/dashboard/page.js"
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/organizations/page": "app/dashboard/organizations/page.js"
 }

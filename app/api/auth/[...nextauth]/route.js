@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
-export const authOptions = {
+const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || 'dummy',
@@ -13,7 +13,6 @@ export const authOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      // Allow all signin attempts for demo
       return true
     },
     async session({ session, user, token }) {
@@ -24,6 +23,8 @@ export const authOptions = {
     signIn: '/auth/signin',
   },
 }
+
+export { authOptions }
 
 const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }

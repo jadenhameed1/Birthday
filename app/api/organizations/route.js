@@ -1,6 +1,8 @@
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
-import { supabase } from '@/lib/supabase'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+
+// Demo data storage (in production, this would be Supabase)
+let demoOrganizations = []
 
 export async function POST(request) {
   const session = await getServerSession(authOptions)
@@ -12,29 +14,24 @@ export async function POST(request) {
   try {
     const { name } = await request.json()
 
-    // Create organization in Supabase
-    const { data: organization, error } = await supabase
-      .from('organizations')
-      .insert({
-        name,
-        slug: name.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
-        owner_id: session.user.id
-      })
-      .select()
-      .single()
+    // Create demo organization
+    const demoOrganization = {
+      id: Date.now().toString(),
+      name: name,
+      slug: name.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+      owner_id: session.user?.id || 'demo-user',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      plan: 'starter',
+      members: 1
+    }
 
-    if (error) throw error
+    // Store in demo array (in production, this would be Supabase)
+    demoOrganizations.push(demoOrganization)
 
-    // Add creator as admin member
-    await supabase
-      .from('organization_members')
-      .insert({
-        user_id: session.user.id,
-        organization_id: organization.id,
-        role: 'admin'
-      })
+    console.log('Demo organization created:', demoOrganization.name)
 
-    return new Response(JSON.stringify(organization), {
+    return new Response(JSON.stringify(demoOrganization), {
       status: 201,
       headers: { 'Content-Type': 'application/json' }
     })
@@ -55,19 +52,12 @@ export async function GET(request) {
   }
 
   try {
-    // Get user's organizations
-    const { data: organizations, error } = await supabase
-      .from('organization_members')
-      .select(`
-        organizations (*)
-      `)
-      .eq('user_id', session.user.id)
+    // Return demo organizations (in production, this would be from Supabase)
+    const userOrganizations = demoOrganizations.filter(org => 
+      org.owner_id === session.user?.id || org.owner_id === 'demo-user'
+    )
 
-    if (error) throw error
-
-    const orgs = organizations?.map(org => org.organizations) || []
-
-    return new Response(JSON.stringify({ organizations: orgs }), {
+    return new Response(JSON.stringify({ organizations: userOrganizations }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     })
