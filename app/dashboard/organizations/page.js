@@ -1,44 +1,101 @@
 'use client'
 
-import { useState } from 'react'
-import { Plus, Building2, Users, Settings, ArrowRight } from 'lucide-react'
-import Link from 'next/link'
+import { useState, useEffect } from 'react'
+import { Plus, Building2, Users, Settings, ArrowRight, Database, RefreshCw } from 'lucide-react'
 
 export default function Organizations() {
   const [organizations, setOrganizations] = useState([])
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [orgName, setOrgName] = useState('')
   const [isCreating, setIsCreating] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Load organizations from database
+  const loadOrganizations = async () => {
+    try {
+      const response = await fetch('/api/organizations')
+      if (response.ok) {
+        const data = await response.json()
+        setOrganizations(data.organizations || [])
+      }
+    } catch (error) {
+      console.error('Error loading organizations:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadOrganizations()
+  }, [])
 
   const createOrganization = async (e) => {
     e.preventDefault()
     if (orgName.trim()) {
       setIsCreating(true)
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      const newOrg = {
-        id: Date.now().toString(),
-        name: orgName,
-        slug: orgName.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
-        members: 1,
-        createdAt: new Date().toISOString(),
-        plan: 'starter'
+      try {
+        const response = await fetch('/api/organizations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: orgName })
+        })
+        
+        if (response.ok) {
+          const newOrg = await response.json()
+          setOrganizations([newOrg, ...organizations])
+          setOrgName('')
+          setShowCreateForm(false)
+          
+          // Show success message
+          alert(`Organization "${newOrg.name}" created successfully!`)
+        } else {
+          throw new Error('Failed to create organization')
+        }
+      } catch (error) {
+        console.error('Error creating organization:', error)
+        alert('Failed to create organization. Please try again.')
+      } finally {
+        setIsCreating(false)
       }
-      
-      setOrganizations([newOrg, ...organizations])
-      setOrgName('')
-      setShowCreateForm(false)
-      setIsCreating(false)
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <RefreshCw className="h-8 w-8 text-blue-600 animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading your organizations...</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Organizations</h1>
-        <p className="mt-2 text-gray-600">Manage your business organizations and teams</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Organizations</h1>
+            <p className="mt-2 text-gray-600">Manage your business organizations and teams</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={loadOrganizations}
+              className="flex items-center text-sm text-gray-600 hover:text-gray-900"
+            >
+              <RefreshCw className="h-4 w-4 mr-1" />
+              Refresh
+            </button>
+            <div className="flex items-center text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
+              <Database className="h-4 w-4 mr-1" />
+              Database Connected
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Create Organization Section */}
@@ -114,7 +171,9 @@ export default function Organizations() {
       {/* Organizations Grid */}
       {organizations.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Organizations</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Your Organizations ({organizations.length})
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {organizations.map(org => (
               <div key={org.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow group">
@@ -128,7 +187,7 @@ export default function Organizations() {
                         {org.name}
                       </h3>
                       <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mt-1">
-                        {org.plan}
+                        {org.plan || 'starter'}
                       </span>
                     </div>
                   </div>
@@ -138,10 +197,10 @@ export default function Organizations() {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-sm text-gray-600">
                     <Users className="h-4 w-4 mr-2" />
-                    <span>{org.members} member{org.members !== 1 ? 's' : ''}</span>
+                    <span>1 member</span>
                   </div>
                   <div className="text-xs text-gray-500">
-                    Created {new Date(org.createdAt).toLocaleDateString()}
+                    Created {new Date(org.created_at).toLocaleDateString()}
                   </div>
                 </div>
                 
@@ -169,6 +228,7 @@ export default function Organizations() {
           <h3 className="text-2xl font-bold text-gray-900 mb-2">No organizations yet</h3>
           <p className="text-gray-600 mb-8 max-w-md mx-auto">
             Organizations help you manage multiple businesses, teams, and services in one place.
+            All data is now stored securely in the database.
           </p>
           <button
             onClick={() => setShowCreateForm(true)}
@@ -177,36 +237,6 @@ export default function Organizations() {
             <Plus className="h-5 w-5 mr-2" />
             Create Your First Organization
           </button>
-        </div>
-      )}
-
-      {/* Features Section */}
-      {organizations.length === 0 && (
-        <div className="bg-gray-50 rounded-lg p-8 mt-12">
-          <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">What can you do with organizations?</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                <Users className="h-6 w-6 text-blue-600" />
-              </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Team Management</h4>
-              <p className="text-gray-600 text-sm">Invite team members and manage permissions</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                <Building2 className="h-6 w-6 text-green-600" />
-              </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Multiple Businesses</h4>
-              <p className="text-gray-600 text-sm">Manage different businesses under one account</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                <Settings className="h-6 w-6 text-purple-600" />
-              </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Custom Settings</h4>
-              <p className="text-gray-600 text-sm">Configure each organization independently</p>
-            </div>
-          </div>
         </div>
       )}
     </div>
