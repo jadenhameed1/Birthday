@@ -2,10 +2,14 @@
 
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { LayoutDashboard, LogOut, Users, Settings } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { LayoutDashboard, LogOut, Users, Settings, Building2 } from 'lucide-react'
 
 export default function DashboardNav({ user }) {
   const { data: session } = useSession()
+  const pathname = usePathname()
+
+  const isActive = (path) => pathname === path
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
@@ -17,12 +21,26 @@ export default function DashboardNav({ user }) {
               <span className="ml-2 text-xl font-bold text-gray-900">Dashboard</span>
             </Link>
             
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-4">
-              <Link href="/dashboard/organizations" className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
-                <Users className="h-4 w-4 mr-2" />
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-1">
+              <Link 
+                href="/dashboard/organizations" 
+                className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                  isActive('/dashboard/organizations') 
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                <Building2 className="h-4 w-4 mr-2" />
                 Organizations
               </Link>
-              <Link href="/dashboard/settings" className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
+              <Link 
+                href="/dashboard/settings" 
+                className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                  isActive('/dashboard/settings') 
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </Link>
@@ -31,12 +49,12 @@ export default function DashboardNav({ user }) {
 
           <div className="flex items-center space-x-4">
             <div className="text-sm text-gray-500">
-              Welcome, {session?.user?.name || session?.user?.email}
+              Welcome, {session?.user?.name || session?.user?.email || user?.name || user?.email}
             </div>
             
             <button
               onClick={() => signOut()}
-              className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+              className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border border-gray-200 rounded-md hover:bg-gray-50"
             >
               <LogOut className="h-4 w-4 mr-1" />
               Sign out
