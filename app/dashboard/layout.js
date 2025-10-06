@@ -1,18 +1,15 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '../api/auth/[...nextauth]/route'
-import { redirect } from 'next/navigation'
 import DashboardNav from '@/components/DashboardNav'
 
-export default async function DashboardLayout({ children }) {
-  const session = await getServerSession(authOptions)
+// Demo user data
+const demoUser = {
+  name: 'Demo User',
+  email: 'demo@techecosystem.com'
+}
 
-  if (!session) {
-    redirect('/auth/signin')
-  }
-
+export default function DashboardLayout({ children }) {
   return (
     <div className="min-h-screen bg-gray-50">
-      <DashboardNav user={session.user} />
+      <DashboardNav user={demoUser} />
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {children}
       </main>

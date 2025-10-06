@@ -1,28 +1,11 @@
 'use client'
 
 import { signIn } from 'next-auth/react'
-import { useState } from 'react'
 
 export default function SignIn() {
-  const [isLoading, setIsLoading] = useState(false)
-
   const handleDemoSignIn = async () => {
-    setIsLoading(true)
-    try {
-      // Use credentials provider for demo
-      const result = await signIn('credentials', {
-        email: 'demo@techecosystem.com',
-        redirect: false,
-      })
-      
-      if (result?.ok) {
-        window.location.href = '/dashboard'
-      }
-    } catch (error) {
-      console.error('Sign in error:', error)
-    } finally {
-      setIsLoading(false)
-    }
+    // Simple redirect to dashboard for demo
+    window.location.href = '/dashboard'
   }
 
   return (
@@ -36,8 +19,7 @@ export default function SignIn() {
         <div className="mt-8 space-y-4">
           <button 
             onClick={() => signIn('google')}
-            disabled={isLoading}
-            className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+            className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -59,10 +41,9 @@ export default function SignIn() {
 
           <button 
             onClick={handleDemoSignIn}
-            disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            {isLoading ? 'Signing in...' : 'Try Demo Mode'}
+            Try Demo Mode
           </button>
         </div>
       </div>
