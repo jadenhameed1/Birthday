@@ -1,1 +1,1 @@
-{"/ app/app/page":"/ app/app","/auth/signin/page":"/auth/signin","/dashboard/marketplace/page":"/dashboard/marketplace","/page":"/","/_not-found":"/_not-found","/api/auth/[...nextauth]/route":"/api/auth/[...nextauth]"}
+{"/_not-found":"/_not-found","/ app/app/page":"/ app/app","/auth/signin/page":"/auth/signin","/page":"/","/api/auth/[...nextauth]/route":"/api/auth/[...nextauth]","/dashboard/marketplace/page":"/dashboard/marketplace","/dashboard/page":"/dashboard"}
