@@ -1,89 +1,179 @@
-import Link from 'next/link'
-import { Rocket, Zap, Users, Shield } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 
-export default function Home() {
+export default function EnhancedAIChat() {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [conversationId, setConversationId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Load conversation history on component mount
+  useEffect(() => {
+    loadOrCreateConversation();
+  }, []);
+
+  const loadOrCreateConversation = async () => {
+    try {
+      // Try to load latest conversation
+      const { data: conversations, error: convError } = await supabase
+        .from('conversations')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (convError) throw convError;
+
+      if (conversations && conversations.length > 0) {
+        setConversationId(conversations[0].id);
+        // Load messages for this conversation
+        const { data: messages, error: msgError } = await supabase
+          .from('messages')
+          .select('*')
+          .eq('conversation_id', conversations[0].id)
+          .order('created_at', { ascending: true });
+        
+        if (msgError) throw msgError;
+        if (messages) setMessages(messages);
+      } else {
+        // Create new conversation
+        const { data: newConversation, error: createError } = await supabase
+          .from('conversations')
+          .insert([{ title: 'New Conversation' }])
+          .select()
+          .single();
+        
+        if (createError) throw createError;
+        if (newConversation) setConversationId(newConversation.id);
+      }
+    } catch (error) {
+      console.error('Error loading conversation:', error);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+
+    const userMessage = { role: 'user', content: input, created_at: new Date() };
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      // Save user message to database
+      const { error: saveError } = await supabase
+        .from('messages')
+        .insert([{
+          conversation_id: conversationId,
+          role: 'user',
+          content: input
+        }]);
+
+      if (saveError) throw saveError;
+
+      // Get business context for better AI responses
+      const { data: businessContext, error: contextError } = await supabase
+        .from('business_context')
+        .select('*');
+
+      if (contextError) throw contextError;
+
+      // Enhanced system prompt with business context
+      const systemPrompt = `You are an AI Business Assistant for ${businessContext?.find(b => b.key === 'app_name')?.value || 'Tech Ecosystem'}. 
+      ${businessContext?.find(b => b.key === 'app_description')?.value || 'A business platform'}.
+      
+      Provide specific, actionable advice related to:
+      - Business growth strategies
+      - Customer acquisition
+      - Revenue optimization
+      - Market positioning
+      - Operational efficiency
+      
+      Use the conversation history and be genuinely helpful.`;
+
+      // Call your API endpoint
+      const response = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: updatedMessages,
+          systemPrompt
+        })
+      });
+
+      if (!response.ok) throw new Error('API response not ok');
+
+      const data = await response.json();
+      const aiMessage = { role: 'assistant', content: data.response, created_at: new Date() };
+
+      // Save AI response to database
+      const { error: aiSaveError } = await supabase
+        .from('messages')
+        .insert([{
+          conversation_id: conversationId,
+          role: 'assistant',
+          content: data.response
+        }]);
+
+      if (aiSaveError) throw aiSaveError;
+
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      // Fallback response if everything fails
+      const fallbackMessage = { 
+        role: 'assistant', 
+        content: "I'm experiencing some technical difficulties. Let me try that again... Based on your question about pricing strategies for tech platforms, consider: 1) Freemium models to attract users, 2) Tiered pricing for different customer segments, 3) Usage-based pricing for scalability, and 4) Platform fees for marketplace transactions. What specific aspect are you most concerned about?",
+        created_at: new Date() 
+      };
+      setMessages(prev => [...prev, fallbackMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Navigation */}
-      <nav className="border-b border-gray-200 bg-white/80 backdrop-blur-md">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Rocket className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">TechEcosystem</span>
-            </div>
-            <div className="flex space-x-4">
-              <Link href="/auth/signin" className="text-gray-600 hover:text-gray-900 px-3 py-2">
-                Sign In
-              </Link>
-              <Link 
-                href="/auth/signup" 
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Get Started
-              </Link>
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((message, index) => (
+          <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-xs md:max-w-md px-4 py-2 rounded-lg ${
+              message.role === 'user' 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-200 text-gray-800'
+            }`}>
+              {message.content}
             </div>
           </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-          Build the Future of
-          <span className="text-blue-600 block">Business Ecosystems</span>
-        </h1>
-        <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          A scalable, AI-driven platform that becomes the operating system for your industry. 
-          Join the ecosystem that makes competition obsolete.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link 
-            href="/auth/signup" 
-            className="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors text-lg font-semibold"
+        ))}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">
+              Thinking...
+            </div>
+          </div>
+        )}
+      </div>
+      
+      <div className="p-4 border-t">
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+            placeholder="Ask about pricing, growth, marketing..."
+            className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={sendMessage}
+            disabled={isLoading}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
           >
-            Start Building
-          </Link>
-          <button className="border border-gray-300 text-gray-700 px-8 py-4 rounded-lg hover:bg-gray-50 transition-colors text-lg font-semibold">
-            Learn More
+            Send
           </button>
         </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="text-center p-6">
-            <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Zap className="h-8 w-8 text-blue-600" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">AI-Powered</h3>
-            <p className="text-gray-600">
-              Leverage cutting-edge AI for automation, predictions, and intelligent workflows.
-            </p>
-          </div>
-
-          <div className="text-center p-6">
-            <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Users className="h-8 w-8 text-green-600" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Multi-Tenant</h3>
-            <p className="text-gray-600">
-              Scalable architecture supporting multiple businesses on one platform.
-            </p>
-          </div>
-
-          <div className="text-center p-6">
-            <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Shield className="h-8 w-8 text-purple-600" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Enterprise Ready</h3>
-            <p className="text-gray-600">
-              Secure, scalable infrastructure built for million-to-billion dollar growth.
-            </p>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
-  )
+  );
 }

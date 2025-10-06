@@ -1,66 +1,75 @@
-import NextAuth from 'next-auth'
-import { SupabaseAdapter } from '@next-auth/supabase-adapter'
-import GoogleProvider from 'next-auth/providers/google'
-import CredentialsProvider from 'next-auth/providers/credentials'
+import { loadConversation } from '../../lib/chatService'
 
-export const authOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-    CredentialsProvider({
-      name: 'credentials',
-      credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' }
-      },
-      async authorize(credentials) {
-        // Custom credential authentication logic
-        const user = { id: '1', email: credentials.email }
-        if (user) {
-          return user
-        }
-        return null
-      }
-    })
-  ],
-  adapter: SupabaseAdapter({
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    secret: process.env.SUPABASE_SERVICE_ROLE_KEY,
-  }),
-  session: {
-    strategy: 'jwt',
-  },
-  callbacks: {
-    async session({ session, user }) {
-      // Get user data from Supabase
-      const { data: userData } = await supabase
-        .from('users')
-        .select('*')
-        .eq('email', session.user.email)
-        .single()
+export async function POST(req) {
+  console.log('🔧 CHAT API: Request received')
+  
+  try {
+    const { message, conversationId } = await req.json()
+    console.log('🔧 CHAT API: Message:', message)
 
-      if (userData) {
-        session.user.id = userData.id
-        session.user.subscription_tier = userData.subscription_tier
-        session.user.stripe_customer_id = userData.stripe_customer_id
-      }
-
-      return session
-    },
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-      }
-      return token
+    if (!message) {
+      return new Response(JSON.stringify({ error: 'Message is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
     }
-  },
-  pages: {
-    signIn: '/auth/signin',
-    signUp: '/auth/signup',
-  },
-}
 
-const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST }
+    // Test environment variables first
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OpenAI API key is missing')
+    }
+
+    console.log('🔧 CHAT API: Calling OpenAI...')
+    
+    // Simple test call to OpenAI
+    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful assistant.'
+          },
+          {
+            role: 'user', 
+            content: message
+          }
+        ],
+        max_tokens: 100
+      }),
+    })
+
+    console.log('🔧 CHAT API: OpenAI response status:', openaiResponse.status)
+
+    if (!openaiResponse.ok) {
+      const errorText = await openaiResponse.text()
+      console.error('🔧 CHAT API: OpenAI error:', errorText)
+      throw new Error(`OpenAI API error: ${openaiResponse.status}`)
+    }
+
+    const data = await openaiResponse.json()
+    console.log('🔧 CHAT API: OpenAI success')
+    
+    return new Response(JSON.stringify({ 
+      response: data.choices[0].message.content 
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    })
+    
+  } catch (error) {
+    console.error('🔧 CHAT API Error:', error.message)
+    return new Response(JSON.stringify({ 
+      error: 'Internal server error',
+      details: error.message
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}

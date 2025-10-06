@@ -1,36 +1,29 @@
 'use client'
+import { useSession } from 'next-auth/react'
+import { redirect } from 'next/navigation'
 
-import { signOut, useSession } from 'next-auth/react'
-import Link from 'next/link'
-import { LayoutDashboard, LogOut } from 'lucide-react'
+export default function Dashboard() {
+  const { data: session, status } = useSession()
 
-export default function DashboardNav({ user }) {
+  if (status === 'loading') {
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>
+  }
+
+  if (!session) {
+    redirect('/auth/signin')
+  }
+
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link href="/dashboard" className="flex-shrink-0 flex items-center">
-              <LayoutDashboard className="h-8 w-8 text-blue-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">Dashboard</span>
-            </Link>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <div className="text-sm text-gray-500">
-              Welcome, {user?.name || user?.email}
-            </div>
-            
-            <button
-              onClick={() => signOut()}
-              className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
-            >
-              <LogOut className="h-4 w-4 mr-1" />
-              Sign out
-            </button>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gray-50 p-8">
+      <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+      <p className="mt-2 text-gray-600">Welcome back, {session.user?.email}</p>
+      
+      {/* Simple link to chat test page */}
+      <div className="mt-8">
+        <a href="/chat-test" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          Go to Chat Test
+        </a>
       </div>
-    </nav>
+    </div>
   )
 }
