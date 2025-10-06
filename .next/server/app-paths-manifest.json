@@ -5,5 +5,6 @@
   "/page": "app/page.js",
   "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
   "/dashboard/marketplace/page": "app/dashboard/marketplace/page.js",
+  "/dashboard/organizations/page": "app/dashboard/organizations/page.js",
   "/dashboard/page": "app/dashboard/page.js"
 }
