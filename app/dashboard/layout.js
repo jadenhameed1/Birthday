@@ -1,6 +1,6 @@
 import DashboardNav from '@/components/DashboardNav'
 
-// Demo user data
+// Demo user data for when auth isn't fully set up
 const demoUser = {
   name: 'Demo User',
   email: 'demo@techecosystem.com'
