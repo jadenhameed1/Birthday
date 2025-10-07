@@ -1,0 +1,64 @@
+
+> tech-ecosystem@0.2.0 build
+> next build
+
+  ▲ Next.js 14.2.33
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/26) ...
+   Generating static pages (6/26) 
+   Generating static pages (12/26) 
+   Generating static pages (19/26) 
+ ✓ Generating static pages (26/26)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                               Size     First Load JS
+┌ ○ /                                     3.8 kB          100 kB
+├ ○ /_not-found                           143 B          87.6 kB
+├ ○ /ai-demo                              2.94 kB        99.2 kB
+├ ○ /ai-insights                          3.48 kB         145 kB
+├ ○ /analytics                            2.73 kB          99 kB
+├ ƒ /api-backup/ai/chat                   0 B                0 B
+├ ƒ /api-backup/auth/[...nextauth]        0 B                0 B
+├ ƒ /api-backup/organizations             0 B                0 B
+├ ƒ /api-backup/payments/create-intent    0 B                0 B
+├ ƒ /api/ai/chat                          0 B                0 B
+├ ƒ /api/auth/[...nextauth]               0 B                0 B
+├ ƒ /api/organizations                    0 B                0 B
+├ ƒ /api/payments/create-intent           0 B                0 B
+├ ○ /app-fixed/app                        2.03 kB         135 kB
+├ ○ /auth/signin                          10.9 kB        98.4 kB
+├ ○ /bookings                             1.97 kB         144 kB
+├ ○ /chat                                 2.81 kB          99 kB
+├ ○ /dashboard                            99 kB           241 kB
+├ ○ /dashboard/marketplace                498 B            88 kB
+├ ○ /dashboard/organizations              2.45 kB        89.9 kB
+├ ○ /lib/app/public-chat                  1.35 kB        88.8 kB
+├ ○ /marketplace                          2.77 kB         145 kB
+├ ○ /notifications                        788 B            97 kB
+├ ○ /providers                            3.61 kB         145 kB
+├ ○ /settings                             847 B          88.3 kB
+└ ○ /team                                 2.59 kB         144 kB
++ First Load JS shared by all             87.5 kB
+  ├ chunks/117-c024afd78bfb6226.js        31.9 kB
+  ├ chunks/fd9d1056-b269926aa472f095.js   53.6 kB
+  └ other shared chunks (total)           1.96 kB
+
+Route (pages)                             Size     First Load JS
+┌ ƒ /api/ai/analytics                     0 B            81.1 kB
+├ ƒ /api/ai/conversations                 0 B            81.1 kB
+├ ƒ /api/team/members                     0 B            81.1 kB
+└ ƒ /api/team/organizations               0 B            81.1 kB
++ First Load JS shared by all             81.1 kB
+  ├ chunks/framework-00a8ba1a63cfdc9e.js  44.9 kB
+  ├ chunks/main-92b7ddacedbdd807.js       34.3 kB
+  └ other shared chunks (total)           1.93 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
