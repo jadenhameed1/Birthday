@@ -1,3 +1,4 @@
+"use client";
 import DashboardNav from '@/components/DashboardNav'
 
 // Demo user data for when auth isn't fully set up

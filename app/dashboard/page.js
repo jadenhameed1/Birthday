@@ -1,3 +1,4 @@
+"use client";
 import { supabase } from '@/lib/supabase'
 import DashboardNav from '@/components/DashboardNav'
 import AnalyticsDashboard from '@/components/AnalyticsDashboard'

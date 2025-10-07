@@ -1,3 +1,4 @@
+"use client";
 // Simple marketplace page for launch
 export default function Marketplace() {
   return (

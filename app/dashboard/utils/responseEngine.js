@@ -1,3 +1,4 @@
+"use client";
 export class ResponseEngine {
   static async generateResponse(prompt, context) {
     // Basic response engine - you can enhance this later
