@@ -2,10 +2,16 @@
 class PushService {
   constructor() {
     this.permission = null
-    this.checkPermission()
+    // REMOVED: this.checkPermission() - causes SSR window error
+  }
+
+  async initialize() {
+    await this.checkPermission()
   }
 
   async checkPermission() {
+    if (typeof window === 'undefined') return // SSR safety check
+    
     if (!('Notification' in window)) {
       console.log('This browser does not support notifications')
       return
