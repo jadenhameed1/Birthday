@@ -1,1 +1,9 @@
-{}
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/api/ai/analytics": "pages/api/ai/analytics.js",
+  "/api/ai/conversations": "pages/api/ai/conversations.js",
+  "/api/team/members": "pages/api/team/members.js",
+  "/api/team/organizations": "pages/api/team/organizations.js",
+  "/_document": "pages/_document.js"
+}

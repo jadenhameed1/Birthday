@@ -1,4 +1,3 @@
--- Create tables
 CREATE TABLE IF NOT EXISTS conversations (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id),
@@ -22,7 +21,6 @@ CREATE TABLE IF NOT EXISTS business_context (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
--- Insert business context
 INSERT INTO business_context (key, value) VALUES
 ('app_name', 'Tech Ecosystem'),
 ('app_description', 'A platform connecting businesses with service providers'),
