@@ -21,3 +21,28 @@ export default function Dashboard() {
     </div>
   )
 }
+'use client'
+import { useAuth } from '@/lib/auth-context'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+
+export default function Dashboard() {
+  const { user, loading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/login')
+    }
+  }, [user, loading, router])
+
+  if (loading) return <div>Loading...</div>
+  if (!user) return <div>Redirecting...</div>
+
+  return (
+    <div>
+      <h1>Welcome, {user.email}!</h1>
+      {/* Your existing dashboard content */}
+    </div>
+  )
+}

@@ -1,13 +1,12 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
-import EnhancedLiveChat from '@/components/EnhancedLiveChat'
-import PerformanceOptimizer from '@/components/PerformanceOptimizer'
+import { AuthProvider } from '@/lib/auth-context'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Tech Ecosystem - Business Platform',
-  description: 'AI-powered business management platform with marketplace, analytics, and team collaboration',
+  title: 'Tech Ecosystem Platform',
+  description: 'All-in-one business platform with AI, marketplace, and analytics',
   keywords: 'business, AI, marketplace, analytics, SaaS',
 }
 
@@ -15,10 +14,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <PerformanceOptimizer />
-        {children}
-        <EnhancedLiveChat />
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )
 }
+import LogoutButton from '@/components/LogoutButton'
+
+// Add this inside your layout where you want the logout button
+<LogoutButton />
